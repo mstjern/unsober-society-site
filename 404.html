@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0e0e0e">
+  <meta name="robots" content="noindex">
+  <title>Not found · Unsober Society</title>
+  <!-- GitHub Pages serves this page for every missing path, including /join/<code>, so every link
+       here is absolute. -->
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="/">Unsober Society</a></li>
+          <li><a href="/terms.html">Terms</a></li>
+          <li><a href="/privacy.html">Privacy</a></li>
+          <li><a href="/support.html">Support</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section id="not-found">
+        <h1>Page not found</h1>
+        <p>There is nothing at this address. Try the <a href="/">home page</a>.</p>
+      </section>
+
+      <section id="invite" class="invite" hidden>
+        <p class="glass" aria-hidden="true">🥃</p>
+        <h1>You’re invited to a crew on Unsober Society</h1>
+        <p class="meta">Check in with your crew. For people of legal drinking age.</p>
+        <p><a class="button" href="https://apps.apple.com/">Get it on the App Store</a></p>
+        <p>Already have the app? Open this link on your iPhone, or <a id="open-app" href="/">open the invite in the app</a>.</p>
+        <p class="code">Invite <span id="invite-code"></span></p>
+      </section>
+    </main>
+    <footer>
+      <p>Unsober Society · <a href="/terms.html">Terms of Use</a> · <a href="/privacy.html">Privacy Policy</a> · <a href="/support.html">Support</a></p>
+    </footer>
+  </div>
+  <script>
+    // /join/<code> shows the invite instead of "not found". A code is exactly ten lowercase
+    // letters or digits (as the app's InviteLink.isValid); anything else stays "not found".
+    (function () {
+      var match = /^\/join\/([^\/]*)\/?$/.exec(location.pathname);
+      if (match === null || !/^[a-z0-9]{10}$/.test(match[1])) return;
+      var code = match[1];
+      document.title = "You’re invited · Unsober Society";
+      document.getElementById("not-found").hidden = true;
+      document.getElementById("invite").hidden = false;
+      document.getElementById("invite-code").textContent = code;
+      document.getElementById("open-app").setAttribute("href", "unsober://join/" + code);
+    })();
+  </script>
+</body>
+</html>
