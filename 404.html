@@ -33,7 +33,8 @@
         <p class="glass" aria-hidden="true">🥃</p>
         <h1>You’re invited to a crew on Unsober Society</h1>
         <p class="meta">Check in with your crew. For people of legal drinking age.</p>
-        <p><a class="button" href="https://apps.apple.com/us/app/id6836925608">Get it on the App Store</a></p>
+        <p><a id="app-store" class="button" href="https://apps.apple.com/us/app/id6836925608">Get it on the App Store</a></p>
+        <p class="meta">Tapping the button copies your invite link. Once the app is installed, open it, tap “Join with a link” and Paste.</p>
         <p>Already have the app? Open this link on your iPhone, or <a id="open-app" href="/">open the invite in the app</a>.</p>
         <p class="code">Invite <span id="invite-code"></span></p>
       </section>
@@ -54,6 +55,45 @@
       document.getElementById("invite").hidden = false;
       document.getElementById("invite-code").textContent = code;
       document.getElementById("open-app").setAttribute("href", "unsober://join/" + code);
+
+      // The invite doesn't survive installing the app, so the App Store button copies the link on
+      // the way; the app's "Join with a link" sheet pastes it. Copying needs the tap itself (a user
+      // gesture), so it happens here, and the App Store opens once the copy has settled. A failed
+      // copy never keeps anyone from the App Store; the href still works without JavaScript.
+      var link = "https://unsober-society.stjernstrom.com/join/" + code;
+      var store = document.getElementById("app-store");
+      store.addEventListener("click", function (event) {
+        // A new tab or window (modifier keys) needs no help: the link opens as it is.
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        var gone = false;
+        var go = function () {
+          if (gone) return;
+          gone = true;
+          location.href = store.href;
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          // A copy that never settles still never keeps anyone from the App Store.
+          setTimeout(go, 1000);
+          try { navigator.clipboard.writeText(link).then(go, go); } catch (e) { go(); }
+        } else {
+          copyWithTextarea(link);
+          go();
+        }
+      });
+
+      // Older browsers: copy from a hidden text field.
+      function copyWithTextarea(text) {
+        var field = document.createElement("textarea");
+        field.value = text;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        document.body.appendChild(field);
+        field.select();
+        try { document.execCommand("copy"); } catch (e) { /* the App Store opens anyway */ }
+        document.body.removeChild(field);
+      }
     })();
   </script>
 </body>
